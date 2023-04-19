@@ -1,0 +1,89 @@
+.loginContenar{
+    height: 100vh;
+    width: 100%;
+    background-color: #212121;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+.login-sub-contenars{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  padding: 20px 0px;
+  background-color:#191919;
+  width: 33%;
+  border-radius: 8px;
+}
+
+.login-componet ,.signup-componet{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;  
+  width: 100%;
+  padding:0px 30px;
+}
+
+.login-componet input ,
+.signup-componet input{
+ width: 100%;
+  padding:10px 10px ;
+ margin: 5px 0px;
+ outline: none;
+ border-radius: 4px;
+ border: 1px solid gray;
+ color: #fff;
+ background-color: transparent;
+}
+
+.login-componet button,
+.signup-componet button{
+    padding: 10px 30px;
+    margin: 10px 0px;
+    border: 1px solid gray;
+    border-radius: 4px;
+    opacity: 0.5;
+    color: #fff;
+    cursor: pointer;
+    background-color: transparent;
+
+}
+
+.google-login button {
+    padding: 10px 20px;
+    margin: 10px 0px;
+    border: 1px solid gray;
+    border-radius: 4px;
+    color: #fff;
+    opacity: 0.6;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.google-login button:hover, 
+.signup-componet button:hover,
+.login-componet button:hover {
+   
+    opacity: 1;
+ 
+}
+
+.heading{
+    margin:5px 0px ;
+    color: #fff;
+    font-size: 17px;
+    text-align: center;
+}
+strong{
+  font-size: 21px;
+  padding: 8px 0px ;
+}
+.or{
+    font-size: 23px;
+    color: #fff;
+    opacity: .5;
+}
