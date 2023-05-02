@@ -7,12 +7,15 @@ import { loginFailure, loginStart, loginSucess } from '../redux/userSlice'
 import { signInWithPopup } from 'firebase/auth'
 import { auth, provider } from './firebase'
 import { useNavigate } from 'react-router-dom'
-
+import { Button, Dropdown, Popconfirm, message } from 'antd';
+import  Cookie  from "js-cookie"
 
 const Login = () => {
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+
+
     const nevigate =useNavigate();
     const dispatch = useDispatch()
 // =======signinHandler=========================
@@ -21,7 +24,8 @@ const SigninHandler =async(e)=>{
    dispatch(loginStart())
   try {
      let res= await axios.post('https://youtube-ni30.onrender.com/youtube/signin',{email,password})
-     
+     console.log(res.data)
+   
      dispatch(loginSucess(res.data))
      setPassword("")
    setEmail("")
@@ -36,11 +40,16 @@ const SigninHandler =async(e)=>{
 const SignupHandler =async(e)=>{
     e.preventDefault()
    let res= await axios.post('https://youtube-ni30.onrender.com/youtube/signup',{name,email,password})
-    alert(`${res.data} login now`)
+   Cookie.set("ytClone",res.data.token)
+
+     message.success(`${res.data.massage} login now`)
+    
    setName("")
    setPassword("")
    setEmail("")
+   alert(Cookie.get('ytClone'))
 }
+
 
 
 // =============signinWithGoogle================
