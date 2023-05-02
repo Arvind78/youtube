@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import youTubeLogo from "../assets/youtubeLogo.png"
-import {Link} from "react-router-dom"
+import {Link, useLocation, useNavigate} from "react-router-dom"
 import HomeIcon from '@mui/icons-material/Home';
 import ExploreIcon from '@mui/icons-material/Explore';
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
@@ -19,7 +19,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import "./css/Menu.css"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
+import axios from "axios"
 import {Button} from "antd"
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -33,6 +33,14 @@ const MenuContenar = styled.div`
   
 const Menu = () => {
     const {currentUser} = useSelector((state)=>state.user)
+    const [vedio,setVedio] =useState([])
+    const nevigate = useNavigate()
+    
+    const categoryHandler = async(category)=>{
+ 
+        nevigate(`/${category}`)
+       
+    }
 
     return (
         <MenuContenar>
@@ -65,14 +73,15 @@ const Menu = () => {
                 </div>
                 </Link>
                 <hr/>
-                <div className="library">
-                    <VideoLibraryIcon/>
-                    <span>Library</span>
+                <div className="music" onClick={()=>categoryHandler("music")} >
+                    <LibraryMusicIcon/>
+                    <span>Music</span>
                 </div>
-                <div className="history">
-                    <HistoryIcon/>
-                    <span>History</span>
+                <div className="sports" onClick={()=>categoryHandler("sports")} >
+                    <SportsBasketballIcon/>
+                    <span>Sports</span>
                 </div>
+                
                 <hr/>{(!currentUser) ? <>
                 <div className="signin">
                     <div className="signmasage">
@@ -92,49 +101,21 @@ const Menu = () => {
                 <div className="option-text">
                     <h3>Best of youtube</h3>
                 </div>
-                <div className="music">
-                    <LibraryMusicIcon/>
-                    <span>Music</span>
-                </div>
-                <div className="sports">
-                    <SportsBasketballIcon/>
-                    <span>Sports</span>
-                </div>
-                <div className="gaming">
+                
+                <div className="gaming" onClick={()=>categoryHandler("gaming")}>
                     <SportsEsportsIcon/>
                     <span>Gaming</span>
                 </div>
-                <div className="movies">
+                <div className="movies" onClick={()=>categoryHandler("movies")} >
                     <MovieCreationIcon/>
                     <span>Movies</span>
                 </div>
-                <div className="news">
+                <div className="news" onClick={()=>categoryHandler("news")} >
                     <ArticleIcon/>
                     <span>News</span>
                 </div>
-                <div className="live">
-                    <LiveTvIcon/>
-                    <span>Live</span>
-                </div>
-                <hr/>
-                <div className="setting">
-                    <SettingsIcon/>
-                    <span>Settings</span>
-                </div>
-                <div className="report">
-                    <FlagIcon/>
-                    <span>Report</span>
-                </div>
-
-                <div className="help">
-                    <HelpOutlineIcon/>
-                    <span>Help</span>
-                </div>
-                <div className="theam">
-                     <SettingsBrightnessIcon/>
-                     <span>Theam</span>
-                </div>
-
+                 
+                
             </div>
         </MenuContenar>
     )

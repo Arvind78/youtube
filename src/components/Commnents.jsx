@@ -1,5 +1,6 @@
 import { Avatar } from '@mui/material';
-import React from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 const Contenars = styled.div`
@@ -26,14 +27,24 @@ font-weight:400;
 `;
 const Text = styled.p``;
 
-const Commnents = () => {
+const Commnents = ({comment}) => {
+  const [channel,setChannel]= useState({})
+
+  useEffect(()=>{
+   const fetchComment = async()=>{
+    const res = await axios.get(`youtube/find/${comment.userId}`)
+    setChannel(res.data)
+   };
+   fetchComment();
+  },[comment.userId])
+
   return (
     <Contenars>
-        <Avatar/>
+        <Avatar src={channel.img}/>
     <Deteils>
-        <Name>Arvind <Date>1 day ago</Date> </Name>
+        <Name>{channel.name}<Date></Date> </Name>
         <Text>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis, cumque nisi cupiditate architecto quo quisquam expedita. Quod reprehenderit laudantium ipsum, dolore dicta est? Unde provident eaque, necessitatibus doloribus hic nulla vel porro quam voluptatum!
+           {comment.desc}
         </Text>
     </Deteils>
     </Contenars>

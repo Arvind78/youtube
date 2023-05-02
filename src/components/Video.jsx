@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import styled from 'styled-components';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
@@ -6,24 +6,34 @@ import {AddTaskOutlined, ReplayOutlined} from '@mui/icons-material';
 import {Avatar} from '@mui/material';
 import Comment from './Comment.jsx'
 import Curd from './Curd.jsx';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { dislike, fetchStart, fetchSucess, like } from '../redux/vedioSlice.js';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import  {format} from "timeago.js"
+import { subscription } from '../redux/userSlice.js';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 
-const Contenar = styled.div `
+const Contenar = styled.div`
    display:flex;
    gap:20px;
+   height:100vh;
    background-color:"gray";
  `;
-const Content = styled.div `
+
+const Content = styled.div`
    flex:4;
   
  `;
-const VideoWapper = styled.div ``;
+const VideoWapper = styled.div``;
 
 const Title = styled.h1 `
  font-size:18px;
  font-weight:400;
  margin-bottom:10px;
  padding:5px 10px;
- '`;
+ `;
 const Deteils = styled.div `
   display:flex;
   align-items:center;
@@ -47,12 +57,7 @@ const Button = styled.div `
  gap:3px;
  cursor:pointer;
  `;
-
-const Recommendetion = styled.div `
-    
-
-    ;`
-
+ 
 const Channel = styled.div `
 display:flex;
 justify-content:space-between;
@@ -72,7 +77,7 @@ const ChannelDeteils = styled.div `
 
 const ChannelName = styled.span`
    font-weight:500px;
-   color:black;
+   color:#fff;
  
 `
 
@@ -96,64 +101,111 @@ const SubscribeBtn = styled.button `
  margin-right:8px;
 cursor:pointer;
 `
-//  recommendetion 
-const Container = styled.div `
+ 
+const Container = styled.div`
    width:420px;
    margin-bottom:45px;
    cursor:pointer;
    border-radius:3px;
     display:flex;
-    /* background-color:green; */
-    gap:10px;
-    
+    justify-content:center;
+    align-items:center;
+    overflow-x:scroll;
+   gap:10px;
+   flex-direction: column;
    `
-const Image = styled.img `
-      height:150px;
-      width:65%;
-      background-color:#999;
-      border-radius:3px;
-`;
-
-const Deteil = styled.div `
-        display:flex;
-       margin-top:16px;
-    
-       gap:0px;
-`;
-
  
-const Text = styled.div`
- 
-`
-const Titles = styled.span`
-  font-size:12px;
-  font-weight:500px;
-`;
-const ChannelUser = styled.h2`
-  font-size:14px;
-  margin:8px 0px;
-`;
-const Infos = styled.span`
- 
-font-size:12px;
-
+const VedioFreams = styled.video`
+max-height:450px;
+width:100%;
+object-fit:cover;
 `;
 
 const Video = () => {
+    const [vedio,setVedio]= useState({})
+    const [channel,setChannel]= useState({})
+    const [reVedio,setRevedio]= useState([])
+    const  [reChannel,setRechannel]= useState([])
+    const {currentUser} = useSelector((state)=>state.user)
+    const {currentVedio} = useSelector((state)=>state.vedio)
+    const dispatch = useDispatch()
+    const path  = useLocation().pathname.split('/')[2]
+  
+       useEffect(()=>{
+ 
+        const feachData = async()=>{
+         
+         let vedioRes = await axios.get(`https://youtube-ni30.onrender.com/youtube/video/find/${path}`)
+           console.log(vedioRes.data)
+
+         let channelRes = await axios.get(`https://youtube-ni30.onrender.com/youtube/find/${vedioRes.data.userId}` )
+      
+            setChannel(channelRes.data)
+       dispatch(fetchSucess(vedioRes.data))
+          setTimeout(()=>{
+             axios.put(`https://youtube-ni30.onrender.com/youtube/video/view/${path}`).then((res)=>console.log(res.data))
+        },10000)
+        }
+
+        feachData()
+    },[path,dispatch])
+  
+    const likeHandler = async ()=>{
+        await axios.put(`https://youtube-ni30.onrender.com/youtube/like/${currentVedio._id}`)
+       dispatch(like(currentUser._id))
+        
+    } 
+       
+        
+        const dislikeHandler =async()=>{
+        console.log(channel._id)
+            await axios.put(`https://youtube-ni30.onrender.com/youtube/unlike/${currentVedio._id}`)
+            dispatch(dislike(currentUser._id))
+        } 
+       
+        const subcribeHandler=async()=>{
+            currentUser.subscribeuser.includes(channel._id)
+         ? await axios.put(`https://youtube-ni30.onrender.com/youtube/unsub/${channel._id}`)
+         : await axios.put(`https://youtube-ni30.onrender.com/youtube/sub/${channel._id}`);
+               console.log(channel)
+         dispatch(subscription(channel._id))
+        }
+        
+        useEffect(()=>{
+        
+        axios.get("https://youtube-ni30.onrender.com/youtube/video/trands")
+       .then((res)=>setRevedio(res.data))
+        
+        },[])
+       
     return (
         <Contenar>
             <Content>
-                <VideoWapper>
-                    <iframe width="100%" height="400" src="https://www.youtube.com/embed/uHyODTc1WfE?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                </VideoWapper>
-                <Title>test Video</Title>
+                 <VideoWapper>
+                    <VedioFreams src={currentVedio.vedioUrl}  controls/> 
+                </VideoWapper> 
+                <Title>{currentVedio.title}</Title>
                 <Deteils>
-                    <Info>7,948,157 views. jun 22,2021</Info>
+                    <Info>{currentVedio.view} views. {format(currentVedio.createdAt)}</Info>
                     <Buttons>
-                        <Button><ThumbUpOffAltIcon/>
-                            123</Button>
+                        <Button onClick={likeHandler}>
+                            {currentVedio.like?.includes(currentUser?._id)?
+                        
+                           ( <ThumbUpIcon style={{color:"white"}} />)
+                          
+                           :(<ThumbUpOffAltIcon/>)
+                           }
 
-                        <Button><ThumbDownOffAltIcon/>
+                         {currentVedio.like?.length}
+                           
+                           
+                        </Button>
+
+                        <Button onClick={dislikeHandler}>
+                        {currentVedio.like?.includes(currentUser?._id)?
+                
+                ( <ThumbDownOffAltIcon/>):  (<ThumbDownIcon/>)}
+                           
                             dislike</Button>
                         <Button><ReplayOutlined/>
                             share</Button>
@@ -164,35 +216,34 @@ const Video = () => {
                 <hr/>
                 <Channel>
                     <ChannelInfo>
-                        <Avatar src='https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1200,h_630/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/t9ur9cc1khkup1dmcbzd/IMG%20Worlds%20of%20Adventure%20Admission%20Ticket%20in%20Dubai%20-%20Klook.jpg'/>
+                        <Avatar src={channel.img}/>
                         <ChannelDeteils>
-                            <ChannelName>Channel name</ChannelName>
-                            <ChannelCounter>200k subscribers</ChannelCounter>
-                            <Description>Lorem ipsum dolor , tempora blanditiis nihil a sunt aliquid sint cupiditate, ipsa provident id ratione amet accusamus voluptatibus doloribus aspernatur? Delectus, similique aliquam? Dolores impedit assumenda ea sapiente sit !</Description>
+                            <ChannelName>{channel.name}</ChannelName>
+                            <ChannelCounter>{channel.subcribers}</ChannelCounter>
+                            <Description>{currentVedio.description}</Description>
                         </ChannelDeteils>
                     </ChannelInfo>
-                    <SubscribeBtn>Subscribe</SubscribeBtn>
+                    <SubscribeBtn onClick={subcribeHandler}>
+                        {currentUser?.subscribeuser?.includes(channel._id)? 
+                        "SUBCRIBEDED":"SUBSCRIBE"
+                        } 
+                    </SubscribeBtn>
                 </Channel>
                 <hr/>
-                <Comment/>
+              <Comment vedioId={currentVedio._id}/>
             </Content>
 
-            <Recommendetion>
+       
             <Container>
-                <Image src='https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1200,h_630/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/t9ur9cc1khkup1dmcbzd/IMG%20Worlds%20of%20Adventure%20Admission%20Ticket%20in%20Dubai%20-%20Klook.jpg'></Image>
-                <Deteil>
-                   
-                    <Text>
-                        <Titles>Test vedio</Titles>
-                        <ChannelUser>Arvind</ChannelUser>
-                        <Infos>9900k views 1 day ago</Infos>
-                    </Text>
-                </Deteil>
-            </Container>
+            {
+             reVedio.map((video)=>(
+            <Curd key={video._id} vedio={video}/> 
+            ))
+          }
+             </Container>
 
-            </Recommendetion>
         </Contenar>
     )
 }
 
-export default Video
+export default Video;

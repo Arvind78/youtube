@@ -8,7 +8,9 @@ const Container = styled.div`
    width:360px;
    margin-bottom:45px;
    cursor:pointer;
+   color:white;
    border-radius:3px;
+
     
    `
 const Image = styled.img `
@@ -47,11 +49,11 @@ const Info = styled.div `
 `;
 
 const Curd = ({vedio}) => {
-    const [channel,setChannel]=useState({});
-
+    console.log("category",vedio)
+    const [channel,setChannel]=useState({})
 useEffect(()=>{
 const fetchChannel = async()=>{
-    let res = await axios.get(`http://localhost:8080/youtube/find/${vedio.userId}`)
+    let res = await axios.get(`https://youtube-ni30.onrender.com/youtube/find/${vedio.userId}`)
     setChannel(res.data)
     
  }
@@ -65,7 +67,7 @@ const fetchChannel = async()=>{
                 {color: "#313131"}
         }>
             <Container>
-                {console.log(channel)}
+               
                 <Image src={vedio.imgUrl}></Image>
                 <Deteils>
                     <ChanelImage src={channel.img}/>

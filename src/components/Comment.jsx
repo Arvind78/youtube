@@ -1,16 +1,19 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {Avatar} from '@mui/material';
 import Commnents from './Commnents';
-
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import SendIcon from '@mui/icons-material/Send';
 const Contenars = styled.div``
 const NewComment = styled.div`
  display:flex;
  align-items:center;
  gap:5px;
  border:1px solid gray;
- padding:5px ;
+ padding:5px 10px;
  border-radius:4px;
+ cursor:pointer;
 `;
  const Input = styled.input`
 border:none;
@@ -23,14 +26,36 @@ padding:10px;
 `;
 
 
-const Comment = () => {
+const Comment = ({vedioId}) => {
+  const [desc,setDesc] = useState("")
+  const {currentUser} = useSelector((state)=>state.user)
+  const [comment,setComment]= useState([]);
+
+  useEffect(()=>{
+    const fetchComment = async ()=>{
+      let commentRes = await axios.get(`https://youtube-ni30.onrender.com/youtube/getcomment/${vedioId}`)
+      setComment(commentRes.data)
+    }
+    fetchComment()
+  },[vedioId])
+
+  const addCommentHandler =async()=>{
+    let res = await axios.post("https://youtube-ni30.onrender.com/youtube/addcomment",{desc,vedioId})
+   
+  }
+
   return (
     <Contenars>
         <NewComment>
-        <Avatar src='https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1200,h_630/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/t9ur9cc1khkup1dmcbzd/IMG%20Worlds%20of%20Adventure%20Admission%20Ticket%20in%20Dubai%20-%20Klook.jpg'/>
-        <Input placeholder='Add a comment...'/> 
+        <Avatar src={currentUser?.img}/>
+        
+        <Input placeholder='Add a comment...' onChange={(e)=>setDesc(e.target.value)} /> 
+          <SendIcon  onClick={addCommentHandler} /> 
         </NewComment>
-        <Commnents/>
+        {comment.map((comments)=>(
+            <Commnents key={comments._id} comment={comments}/>
+        ))
+        }
     </Contenars>
   )
 }
