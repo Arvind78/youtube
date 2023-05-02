@@ -8,6 +8,12 @@ export default defineConfig({
   },
    build: {
     chunkSizeWarningLimit: 1600,
+     rollupOptions: {
+      external: [
+        /^node:.*/,
+      ]
+    }
+
   },
   plugins: [react()],
 })
