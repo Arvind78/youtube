@@ -31,7 +31,7 @@ export default defineConfig({
     chunkSizeWarningLimit: 1600,
       rollupOptions: {
           external: [
-              "@reduxjs/toolkit", // ignore react stuff
+              "reduxjs/toolkit", // ignore react stuff
               "react-dom",
           ],
       }
