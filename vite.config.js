@@ -11,7 +11,7 @@ const aliases = {
   'assets': 'src/assets',
   '@redux': 'src/@redux',
   'components': 'src/components',
-  'redux': 'src/redux/store',
+  '@reduxjs/toolkit': '/vercel/path0/src/redux/store.js',
    
 };
 
