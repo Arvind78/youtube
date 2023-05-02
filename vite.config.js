@@ -22,6 +22,20 @@ export default defineConfig({
    
 
   },
+  resolve: {
+    alias: [
+      {
+        find: /^~.+/,
+        replacement: val => {
+          return val.replace(/^~/, '')
+        }
+      },
+     
+      { find: '@src', replacement: path.resolve(__dirname, 'src') },
+      { find: '@store', replacement: path.resolve(__dirname, '/src/redux/store.js') },
+      
+    ]
+  },
   plugins: [react()],
 })
 
